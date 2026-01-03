@@ -24,7 +24,8 @@ public class CategoryController {
     private ResponseEntity<List<Category>> getAllCategories()
     {
         List<Category> categories = categoryService.getAllCategories();
-        return new ResponseEntity<>(categories,HttpStatus.OK);}
+        return new ResponseEntity<>(categories,HttpStatus.OK);
+    }
 
     @RequestMapping(value = "/public/categories", method = RequestMethod.POST )
     public ResponseEntity<String> createCategory(@RequestBody Category category)
