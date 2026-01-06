@@ -20,44 +20,47 @@ public class CategoryController {
     CategoryService categoryService;
 
 
-   // @GetMapping("/api/public/categories")
-    @RequestMapping(value = "/public/categories", method = RequestMethod.GET )
+    @GetMapping("/public/categories")
+    //@RequestMapping(value = "/public/categories", method = RequestMethod.GET )
     private ResponseEntity<List<Category>> getAllCategories()
     {
         List<Category> categories = categoryService.getAllCategories();
         return new ResponseEntity<>(categories,HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/public/categories", method = RequestMethod.POST )
+    //@RequestMapping(value = "/public/categories", method = RequestMethod.POST )
+    @PostMapping("/public/categories")
     public ResponseEntity<String> createCategory(@Valid @RequestBody Category category)
     {
         categoryService.createCategory(category);
         return new ResponseEntity<>("Category added successfully", HttpStatus.CREATED);
     }
 
-    //@PutMapping("/public/categories/{categoryId}")
-    @RequestMapping(value = "/public/categories/{categoryId}", method = RequestMethod.PUT )
+    @PutMapping("/public/categories/{categoryId}")
+    //@RequestMapping(value = "/public/categories/{categoryId}", method = RequestMethod.PUT )
     public ResponseEntity<String> updateCategory(@RequestBody Category category,@PathVariable Long categoryId)
     {
-       try {
+     //  try {
            Category savedCategory = categoryService.updateCategory(category, categoryId);
            return ResponseEntity.status(HttpStatus.OK).body("Category updated successfully");
-       }
-       catch (ResponseStatusException ex)
-       {return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());}
-       }
+           }
+      // }
+//       catch (ResponseStatusException ex)
+//       {return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());}
+//       }
 
-   // @DeleteMapping("/admin/categories/{categoryId}")
-    @RequestMapping(value = "/admin/categories/{categoryId}", method = RequestMethod.DELETE )
+    //No validations or exception handling in controller just a pass through
+       @DeleteMapping("/admin/categories/{categoryId}")
+    //@RequestMapping(value = "/admin/categories/{categoryId}", method = RequestMethod.DELETE )
     public ResponseEntity<String> deleteCategory(@PathVariable Long categoryId)
     {
-        try {
+      //  try {
             String status = categoryService.deleteCategory(categoryId);
             return ResponseEntity.status(HttpStatus.OK).body(status);
             // catch(ResponseStatusException ex)
         }
-        catch (ResponseStatusException ex)
-        {return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());}
-    }
-
+//        catch (ResponseStatusException ex)
+//        {return new ResponseEntity<>(ex.getReason(), ex.getStatusCode());}
+//    }
+//
 }
