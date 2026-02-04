@@ -3,7 +3,7 @@ package com.ecommerce.exceptions;
 import org.springframework.http.HttpStatus;
 
 public class ResourceNotFoundException extends RuntimeException {
-    String resourcename;
+    String resourceName;
     String field;
     String fieldName;
     Long fieldId;
@@ -11,20 +11,17 @@ public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException() {
     }
 
-    public ResourceNotFoundException(String resourcename, String field, String fieldName) {
-        super(String.format("%s not found with %s: %s",resourcename,field,fieldName));
-        this.resourcename = resourcename;
+    public ResourceNotFoundException(String resourceName, String field, String fieldName) {
+        super(String.format("%s not found with %s: %s", resourceName, field, fieldName));
+        this.resourceName = resourceName;
         this.field = field;
         this.fieldName = fieldName;
     }
 
-    public ResourceNotFoundException(String resourcename, String field, Long fieldId) {
-        super(String.format("%s not found with %s: %d",resourcename,field,fieldId));
-        this.resourcename = resourcename;
+    public ResourceNotFoundException(String resourceName, String field, Long fieldId) {
+        super(String.format("%s not found with %s: %d", resourceName, field, fieldId));
+        this.resourceName = resourceName;
         this.field = field;
         this.fieldId = fieldId;
-
     }
-
-
 }

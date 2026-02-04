@@ -17,60 +17,56 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-@Service
-public class CategoryServiceImpl implements CategoryService {
+    @Service
+    public class CategoryServiceImpl implements CategoryService{
 
-   // private List<Category> categories = new ArrayList<>();
+        @Autowired
+        private CategoryRepository categoryRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private ModelMapper modelMapper;
+        @Autowired
+        private ModelMapper modelMapper;
 
-    @Override
-    public CategoryResponse getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
-        if (categories.isEmpty()) {
-            throw new APIException("Category already exists ");
+        @Override
+        public CategoryResponse getAllCategories() {
+            List<Category> categories = categoryRepository.findAll();
+            if (categories.isEmpty())
+                throw new APIException("No category created till now.");
+
+            List<CategoryDTO> categoryDTOS = categories.stream()
+                    .map(category -> modelMapper.map(category, CategoryDTO.class))
+                    .toList();
+
+            CategoryResponse categoryResponse = new CategoryResponse();
+            categoryResponse.setContent(categoryDTOS);
+            return categoryResponse;
         }
 
-        List<CategoryDTO> categoryDTOs = categories.stream()
-                .map(category -> modelMapper.map(category,CategoryDTO.class))
-                .toList();
-        CategoryResponse categoryResponse = new CategoryResponse();
-        categoryResponse.setContent(categoryDTOs);
-
-        return  categoryResponse;
-    }
-
-    @Override
-    public void createCategory(Category category) {
-        Category savedCategory = categoryRepository.findByCategoryName(category.getCategoryName());
-        if (savedCategory != null) {
-            throw new APIException("Category already exists "+category.getCategoryName());
+        @Override
+        public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+            Category category = modelMapper.map(categoryDTO, Category.class);
+            CategoryDTO categoryFromDb = categoryRepository.findByCategoryName(category.getCategoryName());
+            if (categoryFromDb != null)
+                throw new APIException("Category with the name " + category.getCategoryName() + " already exists !!!");
+            Category savedCategory = categoryRepository.save(category);
+            return modelMapper.map(savedCategory, CategoryDTO.class);
         }
-        //category.setCategoryId(nextId++);
-        categoryRepository.save(category);
-    }
 
-    @Override
-    public String deleteCategory(Long categoryId) {
-        Category category = categoryRepository.
-                findById(categoryId).
-                orElseThrow(() -> new ResourceNotFoundException("Category", "categoryId", categoryId));
+        @Override
+        public String deleteCategory(Long categoryId) {
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Category","categoryId",categoryId));
 
-        categoryRepository.delete(category);
-        return "category with " +categoryId+" deleted";
-    }
+            categoryRepository.delete(category);
+            return "Category with categoryId: " + categoryId + " deleted successfully !!";
+        }
 
-    @Override
-    public Category updateCategory(Category category, Long categoryId) {
-        Optional<Category> savedCategoryOptional =
-                categoryRepository.findById(categoryId);
-        Category savedCategory = savedCategoryOptional.orElseThrow(()
-                -> new ResourceNotFoundException("Category", "categoryId", categoryId));
-        category.setCategoryId(categoryId);
-        savedCategory = categoryRepository.save(category);
-        return savedCategory;
+        @Override
+        public Category updateCategory(Category category, Long categoryId) {
+            Category savedCategory = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Category","categoryId",categoryId));
+
+            category.setCategoryId(categoryId);
+            savedCategory = categoryRepository.save(category);
+            return savedCategory;
+        }
     }
-}
