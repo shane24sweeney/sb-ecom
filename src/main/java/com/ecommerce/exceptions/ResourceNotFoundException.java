@@ -1,6 +1,6 @@
 package com.ecommerce.exceptions;
 
-import org.springframework.http.HttpStatus;
+
 
 public class ResourceNotFoundException extends RuntimeException {
     String resourceName;
